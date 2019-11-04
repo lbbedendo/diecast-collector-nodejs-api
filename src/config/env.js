@@ -1,5 +1,3 @@
-'use strict';
-
 const env = {
   PORT: process.env.PORT || 8080,
   DATABASE_URL: process.env.DATABASE_URL || 'jdbc:postgresql://localhost:5432/diecast_collector_node_dev',
