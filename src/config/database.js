@@ -16,13 +16,13 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.automaker = require('../models/automaker')(sequelize, Sequelize);
-db.brand = require('../models/brand')(sequelize, Sequelize);
-db.serie = require('../models/serie')(sequelize, Sequelize);
-db.model = require('../models/model')(sequelize, Sequelize);
+db.automakers = require('../models/automaker')(sequelize, Sequelize);
+db.brands = require('../models/brand')(sequelize, Sequelize);
+db.series = require('../models/serie')(sequelize, Sequelize);
+db.models = require('../models/model')(sequelize, Sequelize);
 
-db.automaker.hasMany(db.model);
-db.brand.hasMany(db.model);
-db.serie.hasMany(db.model);
+db.automakers.hasMany(db.models);
+db.brands.hasMany(db.models);
+db.series.hasMany(db.models);
 
 module.exports = db;
