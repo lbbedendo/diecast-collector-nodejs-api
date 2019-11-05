@@ -1,4 +1,5 @@
 const { check, validationResult } = require("express-validator");
+const { notFound } = require("./shared/constants");
 
 const validation = [
   check("name", "Name is required and must be a string")
@@ -8,6 +9,23 @@ const validation = [
 ];
 
 module.exports = (app, db) => {
+  app.get("/models", (req, res) => {
+    db.models.findAll().then(models => {
+      res.json(models);
+    });
+  });
+
+  app.get("/models/:id", (req, res) => {
+    const id = req.params.id;
+    db.models.findByPk(id).then(model => {
+      if (!model) {
+        res.status(404).json(notFound);
+      } else {
+        res.json(model);
+      }
+    });
+  });
+
   app.post("/models", validation, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

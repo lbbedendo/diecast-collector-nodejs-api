@@ -1,4 +1,5 @@
 const { check, validationResult } = require("express-validator");
+const { notFound } = require("./shared/constants");
 
 const validation = [
   check("name", "Name is required and must be a string")
@@ -10,20 +11,16 @@ const validation = [
     .isString()
 ];
 
-const notFound = {
-  msg: "Resource not found"
-};
-
 module.exports = (app, db) => {
   app.get("/automakers", (req, res) => {
-    return db.automakers.findAll().then(automakers => {
+    db.automakers.findAll().then(automakers => {
       res.json(automakers);
     });
   });
 
   app.get("/automakers/:id", (req, res) => {
     const id = req.params.id;
-    return db.automakers.findByPk(id).then(automaker => {
+    db.automakers.findByPk(id).then(automaker => {
       if (!automaker) {
         res.status(404).json(notFound);
       } else {
