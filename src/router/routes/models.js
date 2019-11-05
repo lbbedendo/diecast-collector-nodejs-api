@@ -8,7 +8,7 @@ const validation = [
 ];
 
 module.exports = (app, db) => {
-  app.post("/models", validation, (req, res) => {
+  app.post("/models", validation, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
@@ -23,21 +23,14 @@ module.exports = (app, db) => {
 
     const automakerId = req.body.automakerId;
     if (automakerId) {
-      db.automakers.findByPk(automakerId).then(automaker => {
-        if (!automaker) {
-          return res
-            .status(422)
-            .json({ msg: `Automaker ${automakerId} not found` });
-        }
-        model.automakerId = automakerId;
-        model.save().then(m => {
-          res.json(m);
-        });
-      });
-    } else {
-      model.save().then(m => {
-        res.json(m);
-      });
+      const automaker = await db.automakers.findByPk(automakerId);
+      if (!automaker) {
+        return res
+          .status(422)
+          .json({ msg: `Automaker ${automakerId} not found` });
+      }
+      model.automakerId = automakerId;
     }
+    model.save().then(m => res.json(m));
   });
 };
