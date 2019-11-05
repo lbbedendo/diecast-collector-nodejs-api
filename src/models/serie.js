@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Serie = sequelize.define('serie', {
+  const Serie = sequelize.define("series", {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -8,8 +8,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
+    },
+    year: {
+      type: DataTypes.INTEGER
     }
   });
   return Serie;
-}
+};

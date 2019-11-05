@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Model = sequelize.define('model', {
+  const Model = sequelize.define("models", {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -15,4 +15,4 @@ module.exports = (sequelize, DataTypes) => {
     colorRgba: DataTypes.STRING
   });
   return Model;
-}
+};

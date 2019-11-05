@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Automaker = sequelize.define("automaker", {
+  const Automaker = sequelize.define("automakers", {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
