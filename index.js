@@ -18,12 +18,9 @@ app.use((req, res, next) => {
 
 router(app, db);
 
-db.sequelize
-  .sync()
-  // .sync({ force: true })
-  .then(() => {
-    app.listen(process.env.PORT, () => {
-      console.log("DATABASE_URL: ", process.env.DATABASE_URL);
-      console.log("Express listening on port:", process.env.PORT);
-    });
+db.sequelize.sync().then(() => {
+  app.listen(process.env.PORT, () => {
+    console.log("DATABASE_URL: ", process.env.DATABASE_URL);
+    console.log("Express listening on port:", process.env.PORT);
   });
+});
