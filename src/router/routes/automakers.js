@@ -1,18 +1,79 @@
+const { check, validationResult } = require("express-validator");
+
+const validation = [
+  check("name", "Name is required and must be a string")
+    .not()
+    .isEmpty()
+    .isString(),
+  check("country", "Country must be a string")
+    .optional()
+    .isString()
+];
+
+const notFound = {
+  msg: "Resource not found"
+};
+
 module.exports = (app, db) => {
-  app.get('/automakers', (req, res) => {
+  app.get("/automakers", (req, res) => {
     return db.automakers.findAll().then(automakers => {
       res.json(automakers);
     });
   });
 
-  app.get('/automakers/:id', (req, res) => {
+  app.get("/automakers/:id", (req, res) => {
     const id = req.params.id;
     return db.automakers.findByPk(id).then(automaker => {
-      res.json(automaker);
+      if (!automaker) {
+        res.status(404).json(notFound);
+      } else {
+        res.json(automaker);
+      }
     });
   });
 
-  app.post('/automakers', (req, res) => {
+  app.post("/automakers", validation, (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
 
+    db.automakers
+      .create({
+        name: req.body.name,
+        country: req.body.country
+      })
+      .then(automaker => res.json(automaker))
+      .catch(err => res.status(500).json(err));
+  });
+
+  app.put("/automakers/:id", validation, (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    db.automakers.findByPk(req.params.id).then(automaker => {
+      if (!automaker) {
+        return res.status(404).json(notFound);
+      }
+      automaker.name = req.body.name;
+      automaker.country = req.body.country;
+      automaker.save();
+      return res.json(automaker);
+    });
+  });
+
+  app.delete("/automakers/:id", (req, res) => {
+    db.automakers
+      .destroy({
+        where: {
+          id: req.params.id
+        }
+      })
+      .then(itemsRemoved => {
+        res.status(200).json(itemsRemoved);
+      })
+      .catch(err => res.status(500).json(err));
   });
 };

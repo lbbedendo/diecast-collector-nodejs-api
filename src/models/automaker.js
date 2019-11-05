@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Automaker = sequelize.define('automaker', {
+  const Automaker = sequelize.define("automaker", {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -8,11 +8,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     country: {
       type: DataTypes.STRING
     }
   });
   return Automaker;
-}
+};
