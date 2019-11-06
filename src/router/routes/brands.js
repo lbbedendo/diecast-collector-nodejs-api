@@ -38,6 +38,34 @@ module.exports = (app, db) => {
       })
       .then(brand => {
         res.json(brand);
-      });
+      })
+      .catch(err => res.status(500).json(err));
+  });
+
+  app.put("/brands/:id", validation, (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    db.brands.findByPk(req.params.id).then(brand => {
+      if (!brand) {
+        return res.status(404).json(notFound);
+      }
+      brand.name = req.body.name;
+      brand
+        .save()
+        .then(b => res.json(b))
+        .catch(err => res.status(500).json(err));
+    });
+  });
+
+  app.delete("/brands/:id", (req, res) => {
+    db.brands
+      .destroy({
+        where: { id: req.params.id }
+      })
+      .then(itemsRemoved => res.json(itemsRemoved))
+      .catch(err => res.status(500).json(err));
   });
 };
