@@ -49,6 +49,38 @@ module.exports = (app, db) => {
       }
       model.automakerId = automakerId;
     }
-    model.save().then(m => res.json(m));
+    const brandId = req.body.brandId;
+    if (brandId) {
+      const brand = await db.brands.findByPk(brandId);
+      if (!brand) {
+        return res.status(422).json({ msg: `Brand ${brandId} not found` });
+      }
+      model.brandId = brandId;
+    }
+    const serieId = req.body.serieId;
+    if (serieId) {
+      const serie = db.series.findByPk(serieId);
+      if (!serie) {
+        return res.status(422).json({ msg: `Serie ${serieId} not found` });
+      }
+      model.serieId = serieId;
+    }
+    model
+      .save()
+      .then(m => res.json(m))
+      .catch(err => res.status(500).json(err));
+  });
+
+  app.put("/models/:id", validation, (req, res) => {});
+
+  app.delete("/models/:id", (req, res) => {
+    db.models
+      .destroy({
+        where: {
+          id: req.params.id
+        }
+      })
+      .then(itemsRemoved => res.json(itemsRemoved))
+      .catch(err => res.status(500).json(err));
   });
 };
