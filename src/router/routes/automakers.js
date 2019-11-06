@@ -56,8 +56,10 @@ module.exports = (app, db) => {
       }
       automaker.name = req.body.name;
       automaker.country = req.body.country;
-      automaker.save();
-      return res.json(automaker);
+      automaker
+        .save()
+        .then(a => res.json(a))
+        .catch(err => res.status(500).json(err));
     });
   });
 
