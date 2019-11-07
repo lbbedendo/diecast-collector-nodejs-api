@@ -1,15 +1,6 @@
-const { check, validationResult } = require("express-validator");
+const { validationResult } = require("express-validator");
 const { notFound, requestValidationError } = require("./shared/httpErrors");
-
-const validation = [
-  check("name", "Name is required and must be a string")
-    .not()
-    .isEmpty()
-    .isString(),
-  check("country", "Country must be a string")
-    .optional()
-    .isString()
-];
+const { bodySchema, validate } = require("./validators/automakerValidator");
 
 module.exports = (app, db) => {
   app.get("/automakers", (req, res) => {
@@ -29,7 +20,7 @@ module.exports = (app, db) => {
     });
   });
 
-  app.post("/automakers", validation, (req, res) => {
+  app.post("/automakers", bodySchema, validate, (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return requestValidationError(res, errors);
@@ -44,7 +35,7 @@ module.exports = (app, db) => {
       .catch(err => res.status(500).json(err));
   });
 
-  app.put("/automakers/:id", validation, (req, res) => {
+  app.put("/automakers/:id", bodySchema, validate, (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return requestValidationError(res, errors);
