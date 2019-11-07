@@ -1,5 +1,5 @@
 const { check, validationResult } = require("express-validator");
-const { notFound } = require("./shared/constants");
+const { notFound, requestValidationError } = require("./shared/httpErrors");
 
 const validation = [
   check("name", "Name is required and must be a string")
@@ -19,7 +19,7 @@ module.exports = (app, db) => {
     const id = req.params.id;
     db.models.findByPk(id).then(model => {
       if (!model) {
-        res.status(404).json(notFound);
+        notFound(res, `Model ${id} not found`);
       } else {
         res.json(model);
       }
@@ -29,7 +29,7 @@ module.exports = (app, db) => {
   app.post("/models", validation, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
+      return requestValidationError(res, errors);
     }
 
     const model = db.models.build({

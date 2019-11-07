@@ -1,5 +1,5 @@
 const { check, validationResult } = require("express-validator");
-const { notFound } = require("./shared/constants");
+const { notFound, requestValidationError } = require("./shared/httpErrors");
 
 const validation = [
   check("name", "Name is required and must be a string")
@@ -22,7 +22,7 @@ module.exports = (app, db) => {
     const id = req.params.id;
     db.automakers.findByPk(id).then(automaker => {
       if (!automaker) {
-        res.status(404).json(notFound);
+        notFound(res, `Automaker ${id} not found`);
       } else {
         res.json(automaker);
       }
@@ -32,7 +32,7 @@ module.exports = (app, db) => {
   app.post("/automakers", validation, (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
+      return requestValidationError(res, errors);
     }
 
     db.automakers
@@ -47,12 +47,13 @@ module.exports = (app, db) => {
   app.put("/automakers/:id", validation, (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
+      return requestValidationError(res, errors);
     }
 
-    db.automakers.findByPk(req.params.id).then(automaker => {
+    const id = req.params.id;
+    db.automakers.findByPk(id).then(automaker => {
       if (!automaker) {
-        return res.status(404).json(notFound);
+        return notFound(res, `Automaker ${id} not found`);
       }
       automaker.name = req.body.name;
       automaker.country = req.body.country;

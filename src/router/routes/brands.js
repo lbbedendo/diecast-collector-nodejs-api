@@ -1,5 +1,5 @@
 const { check, validationResult } = require("express-validator");
-const { notFound } = require("./shared/constants");
+const { notFound, requestValidationError } = require("./shared/httpErrors");
 
 const validation = [
   check("name", "Name is required and must be a string")
@@ -19,7 +19,7 @@ module.exports = (app, db) => {
     const id = req.params.id;
     db.brands.findByPk(id).then(brand => {
       if (!brand) {
-        res.status(404).json(notFound);
+        notFound(res, `Brand ${id} not found`);
       } else {
         res.json(brand);
       }
@@ -29,7 +29,7 @@ module.exports = (app, db) => {
   app.post("/brands", validation, (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
+      return requestValidationError(res, errors);
     }
 
     db.brands
@@ -45,12 +45,13 @@ module.exports = (app, db) => {
   app.put("/brands/:id", validation, (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
+      return requestValidationError(res, errors);
     }
 
-    db.brands.findByPk(req.params.id).then(brand => {
+    const id = req.params.id;
+    db.brands.findByPk(id).then(brand => {
       if (!brand) {
-        return res.status(404).json(notFound);
+        return notFound(res, `Brand ${id} not found`);
       }
       brand.name = req.body.name;
       brand

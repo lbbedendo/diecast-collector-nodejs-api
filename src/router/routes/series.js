@@ -1,13 +1,35 @@
-const { check, validationResult } = require("express-validator");
-const { notFound } = require("./shared/constants");
+const { checkSchema, check, validationResult } = require("express-validator");
+const { notFound, requestValidationError } = require("./shared/httpErrors");
 
-const validation = [
-  check("name", "Name is required and must be a string")
-    .not()
-    .isEmpty()
-    .isString(),
-  check("year", "Year must be a positive integer").isInt({ gt: 0 })
-];
+const idValidation = checkSchema({
+  id: {
+    in: "params",
+    errorMessage: "Id must be an integer",
+    isInt: true,
+    toInt: true
+  }
+});
+
+const bodyValidation = checkSchema({
+  name: {
+    in: "body",
+    errorMessage: "Name is required",
+    isString: true,
+    trim: true
+  },
+  year: {
+    in: "body",
+    errorMessage: "Year must be an integer",
+    isInt: true,
+    optional: {
+      options: {
+        nullable: true
+      }
+    }
+  }
+});
+
+const idAndBodyValidation = [idValidation, bodyValidation];
 
 module.exports = (app, db) => {
   app.get("/series", (req, res) => {
@@ -16,21 +38,24 @@ module.exports = (app, db) => {
     });
   });
 
-  app.get("/series/:id", (req, res) => {
+  app.get("/series/:id(\\d+)?", (req, res) => {
     const id = req.params.id;
-    db.series.findByPk(id).then(serie => {
-      if (!serie) {
-        res.status(404).json(notFound);
-      } else {
-        res.json(serie);
-      }
-    });
+    db.series
+      .findByPk(id)
+      .then(serie => {
+        if (!serie) {
+          notFound(res, `Serie ${id} not found`);
+        } else {
+          res.json(serie);
+        }
+      })
+      .catch(err => res.status(500).json(err));
   });
 
-  app.post("/series", validation, (req, res) => {
+  app.post("/series", bodyValidation, (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
+      return requestValidationError(res, errors);
     }
 
     db.series
@@ -44,15 +69,15 @@ module.exports = (app, db) => {
       .catch(err => res.status(500).json(err));
   });
 
-  app.put("/series/:id", validation, (req, res) => {
+  app.put("/series/:id", idAndBodyValidation, (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
+      return requestValidationError(res, errors);
     }
 
     db.series.findByPk(req.params.id).then(serie => {
       if (!serie) {
-        return res.status(404).json(notFound);
+        return notFound(res, `Serie ${id} not found`);
       }
       serie.name = req.body.name;
       serie.year = req.body.year;
@@ -63,7 +88,7 @@ module.exports = (app, db) => {
     });
   });
 
-  app.delete("/series/:id", (req, res) => {
+  app.delete("/series/:id(\\d+)?", idValidation, (req, res) => {
     db.series
       .destroy({
         where: {
