@@ -1,9 +1,9 @@
 const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
-require("custom-env").env(true);
+require("dotenv").config();
 
-const db = require("./src/config/database");
+const db = require("./src/database/models/index");
 const router = require("./src/router/index");
 
 const app = express();
@@ -20,7 +20,6 @@ router(app, db);
 
 db.sequelize.sync().then(() => {
   app.listen(process.env.PORT, () => {
-    console.log("DATABASE_URL: ", process.env.DATABASE_URL);
     console.log("Express listening on port:", process.env.PORT);
   });
 });
