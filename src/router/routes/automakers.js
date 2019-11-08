@@ -3,35 +3,36 @@ const { notFound, requestValidationError } = require("./shared/httpErrors");
 const { bodySchema, validate } = require("./validators/automakerValidator");
 
 module.exports = (app, db) => {
-  app.get("/automakers", (req, res) => {
-    db.Automaker.findAll().then(automakers => {
-      res.json(automakers);
-    });
+  app.get("/automakers", async (req, res) => {
+    const automakers = await db.Automaker.findAll();
+    return res.json(automakers);
   });
 
-  app.get("/automakers/:id", (req, res) => {
+  app.get("/automakers/:id", async (req, res) => {
     const id = req.params.id;
-    db.Automaker.findByPk(id).then(automaker => {
-      if (!automaker) {
-        notFound(res, `Automaker ${id} not found`);
-      } else {
-        res.json(automaker);
-      }
-    });
+    const automaker = await db.Automaker.findByPk(id);
+    if (!automaker) {
+      return notFound(res, `Automaker ${id} not found`);
+    } else {
+      return res.json(automaker);
+    }
   });
 
-  app.post("/automakers", bodySchema, validate, (req, res) => {
+  app.post("/automakers", bodySchema, validate, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return requestValidationError(res, errors);
     }
 
-    db.Automaker.create({
-      name: req.body.name,
-      country: req.body.country
-    })
-      .then(automaker => res.status(201).json(automaker))
-      .catch(err => res.status(500).json(err));
+    try {
+      const automaker = await db.Automaker.create({
+        name: req.body.name,
+        country: req.body.country
+      });
+      return res.status(201).json(automaker);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
   });
 
   app.put("/automakers/:id", bodySchema, validate, (req, res) => {
