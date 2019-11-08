@@ -27,6 +27,9 @@ module.exports = {
       brandId: {
         type: Sequelize.INTEGER
       },
+      serieId: {
+        type: Sequelize.INTEGER
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
