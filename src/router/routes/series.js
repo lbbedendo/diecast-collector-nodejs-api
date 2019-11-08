@@ -1,4 +1,4 @@
-const { checkSchema, check, validationResult } = require("express-validator");
+const { checkSchema, validationResult } = require("express-validator");
 const { notFound, requestValidationError } = require("./shared/httpErrors");
 
 const idValidation = checkSchema({
@@ -33,15 +33,14 @@ const idAndBodyValidation = [idValidation, bodyValidation];
 
 module.exports = (app, db) => {
   app.get("/series", (req, res) => {
-    db.series.findAll().then(series => {
+    db.Serie.findAll().then(series => {
       res.json(series);
     });
   });
 
   app.get("/series/:id(\\d+)?", (req, res) => {
     const id = req.params.id;
-    db.series
-      .findByPk(id)
+    db.Serie.findByPk(id)
       .then(serie => {
         if (!serie) {
           notFound(res, `Serie ${id} not found`);
@@ -58,11 +57,10 @@ module.exports = (app, db) => {
       return requestValidationError(res, errors);
     }
 
-    db.series
-      .create({
-        name: req.body.name,
-        year: req.body.year
-      })
+    db.Serie.create({
+      name: req.body.name,
+      year: req.body.year
+    })
       .then(serie => {
         res.json(serie);
       })
@@ -75,7 +73,7 @@ module.exports = (app, db) => {
       return requestValidationError(res, errors);
     }
 
-    db.series.findByPk(req.params.id).then(serie => {
+    db.Serie.findByPk(req.params.id).then(serie => {
       if (!serie) {
         return notFound(res, `Serie ${id} not found`);
       }
@@ -89,12 +87,11 @@ module.exports = (app, db) => {
   });
 
   app.delete("/series/:id(\\d+)?", idValidation, (req, res) => {
-    db.series
-      .destroy({
-        where: {
-          id: req.params.id
-        }
-      })
+    db.Serie.destroy({
+      where: {
+        id: req.params.id
+      }
+    })
       .then(itemsRemoved => res.json(itemsRemoved))
       .catch(err => res.json(err));
   });

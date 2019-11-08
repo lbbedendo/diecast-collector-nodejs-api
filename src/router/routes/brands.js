@@ -10,14 +10,14 @@ const validation = [
 
 module.exports = (app, db) => {
   app.get("/brands", (req, res) => {
-    db.brands.findAll().then(brands => {
+    db.Brand.findAll().then(brands => {
       res.json(brands);
     });
   });
 
   app.get("/brands/:id", (req, res) => {
     const id = req.params.id;
-    db.brands.findByPk(id).then(brand => {
+    db.Brand.findByPk(id).then(brand => {
       if (!brand) {
         notFound(res, `Brand ${id} not found`);
       } else {
@@ -32,10 +32,9 @@ module.exports = (app, db) => {
       return requestValidationError(res, errors);
     }
 
-    db.brands
-      .create({
-        name: req.body.name
-      })
+    db.Brand.create({
+      name: req.body.name
+    })
       .then(brand => {
         res.json(brand);
       })
@@ -49,7 +48,7 @@ module.exports = (app, db) => {
     }
 
     const id = req.params.id;
-    db.brands.findByPk(id).then(brand => {
+    db.Brand.findByPk(id).then(brand => {
       if (!brand) {
         return notFound(res, `Brand ${id} not found`);
       }
@@ -62,10 +61,9 @@ module.exports = (app, db) => {
   });
 
   app.delete("/brands/:id", (req, res) => {
-    db.brands
-      .destroy({
-        where: { id: req.params.id }
-      })
+    db.Brand.destroy({
+      where: { id: req.params.id }
+    })
       .then(itemsRemoved => res.json(itemsRemoved))
       .catch(err => res.status(500).json(err));
   });

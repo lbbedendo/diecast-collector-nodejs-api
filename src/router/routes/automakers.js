@@ -4,14 +4,14 @@ const { bodySchema, validate } = require("./validators/automakerValidator");
 
 module.exports = (app, db) => {
   app.get("/automakers", (req, res) => {
-    db.automakers.findAll().then(automakers => {
+    db.Automaker.findAll().then(automakers => {
       res.json(automakers);
     });
   });
 
   app.get("/automakers/:id", (req, res) => {
     const id = req.params.id;
-    db.automakers.findByPk(id).then(automaker => {
+    db.Automaker.findByPk(id).then(automaker => {
       if (!automaker) {
         notFound(res, `Automaker ${id} not found`);
       } else {
@@ -26,11 +26,10 @@ module.exports = (app, db) => {
       return requestValidationError(res, errors);
     }
 
-    db.automakers
-      .create({
-        name: req.body.name,
-        country: req.body.country
-      })
+    db.Automaker.create({
+      name: req.body.name,
+      country: req.body.country
+    })
       .then(automaker => res.json(automaker))
       .catch(err => res.status(500).json(err));
   });
@@ -42,7 +41,7 @@ module.exports = (app, db) => {
     }
 
     const id = req.params.id;
-    db.automakers.findByPk(id).then(automaker => {
+    db.Automaker.findByPk(id).then(automaker => {
       if (!automaker) {
         return notFound(res, `Automaker ${id} not found`);
       }
@@ -56,12 +55,11 @@ module.exports = (app, db) => {
   });
 
   app.delete("/automakers/:id", (req, res) => {
-    db.automakers
-      .destroy({
-        where: {
-          id: req.params.id
-        }
-      })
+    db.Automaker.destroy({
+      where: {
+        id: req.params.id
+      }
+    })
       .then(itemsRemoved => {
         res.status(200).json(itemsRemoved);
       })

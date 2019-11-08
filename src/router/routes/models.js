@@ -10,14 +10,14 @@ const validation = [
 
 module.exports = (app, db) => {
   app.get("/models", (req, res) => {
-    db.models.findAll().then(models => {
+    db.Model.findAll().then(models => {
       res.json(models);
     });
   });
 
   app.get("/models/:id", (req, res) => {
     const id = req.params.id;
-    db.models.findByPk(id).then(model => {
+    db.Model.findByPk(id).then(model => {
       if (!model) {
         notFound(res, `Model ${id} not found`);
       } else {
@@ -32,7 +32,7 @@ module.exports = (app, db) => {
       return requestValidationError(res, errors);
     }
 
-    const model = db.models.build({
+    const model = db.Model.build({
       name: req.body.name,
       year: req.body.year,
       scale: req.body.scale,
@@ -41,7 +41,7 @@ module.exports = (app, db) => {
 
     const automakerId = req.body.automakerId;
     if (automakerId) {
-      const automaker = await db.automakers.findByPk(automakerId);
+      const automaker = await db.Automaker.findByPk(automakerId);
       if (!automaker) {
         return res
           .status(422)
@@ -51,7 +51,7 @@ module.exports = (app, db) => {
     }
     const brandId = req.body.brandId;
     if (brandId) {
-      const brand = await db.brands.findByPk(brandId);
+      const brand = await db.Brand.findByPk(brandId);
       if (!brand) {
         return res.status(422).json({ msg: `Brand ${brandId} not found` });
       }
@@ -59,7 +59,7 @@ module.exports = (app, db) => {
     }
     const serieId = req.body.serieId;
     if (serieId) {
-      const serie = db.series.findByPk(serieId);
+      const serie = await db.Serie.findByPk(serieId);
       if (!serie) {
         return res.status(422).json({ msg: `Serie ${serieId} not found` });
       }
@@ -74,12 +74,11 @@ module.exports = (app, db) => {
   app.put("/models/:id", validation, (req, res) => {});
 
   app.delete("/models/:id", (req, res) => {
-    db.models
-      .destroy({
-        where: {
-          id: req.params.id
-        }
-      })
+    db.Model.destroy({
+      where: {
+        id: req.params.id
+      }
+    })
       .then(itemsRemoved => res.json(itemsRemoved))
       .catch(err => res.status(500).json(err));
   });
