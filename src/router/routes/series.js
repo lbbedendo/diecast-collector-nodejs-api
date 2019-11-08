@@ -61,9 +61,7 @@ module.exports = (app, db) => {
       name: req.body.name,
       year: req.body.year
     })
-      .then(serie => {
-        res.json(serie);
-      })
+      .then(serie => res.status(201).json(serie))
       .catch(err => res.status(500).json(err));
   });
 

@@ -67,7 +67,7 @@ module.exports = (app, db) => {
     }
     model
       .save()
-      .then(m => res.json(m))
+      .then(m => res.status(201).json(m))
       .catch(err => res.status(500).json(err));
   });
 

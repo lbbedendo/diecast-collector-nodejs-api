@@ -30,7 +30,7 @@ module.exports = (app, db) => {
       name: req.body.name,
       country: req.body.country
     })
-      .then(automaker => res.json(automaker))
+      .then(automaker => res.status(201).json(automaker))
       .catch(err => res.status(500).json(err));
   });
 

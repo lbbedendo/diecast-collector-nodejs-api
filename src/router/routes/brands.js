@@ -35,9 +35,7 @@ module.exports = (app, db) => {
     db.Brand.create({
       name: req.body.name
     })
-      .then(brand => {
-        res.json(brand);
-      })
+      .then(brand => res.status(201).json(brand))
       .catch(err => res.status(500).json(err));
   });
 
