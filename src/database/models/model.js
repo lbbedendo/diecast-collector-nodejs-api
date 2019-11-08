@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       year: DataTypes.INTEGER,
       scale: DataTypes.STRING,
-      color_rgba: DataTypes.STRING,
+      colorRgba: DataTypes.STRING,
       automakerId: DataTypes.INTEGER,
       brandId: DataTypes.INTEGER,
       serieId: DataTypes.INTEGER

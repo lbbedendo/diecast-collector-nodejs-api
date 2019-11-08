@@ -18,7 +18,7 @@ module.exports = {
       scale: {
         type: Sequelize.STRING
       },
-      color_rgba: {
+      colorRgba: {
         type: Sequelize.STRING
       },
       automakerId: {
