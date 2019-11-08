@@ -8,9 +8,7 @@ module.exports = {
       references: {
         table: "Series",
         field: "id"
-      },
-      onUpdate: "CASCADE",
-      onDelete: "SET NULL"
+      }
     });
   },
 
