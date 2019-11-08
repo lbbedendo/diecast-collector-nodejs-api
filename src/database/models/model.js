@@ -23,15 +23,9 @@ module.exports = (sequelize, DataTypes) => {
     {}
   );
   Model.associate = function(models) {
-    Model.hasOne(models.Automaker, {
-      foreignKey: "automakerId"
-    });
-    Model.hasOne(models.Brand, {
-      foreignKey: "brandId"
-    });
-    Model.hasOne(models.Serie, {
-      foreignKey: "serieId"
-    });
+    Model.belongsTo(models.Automaker);
+    Model.belongsTo(models.Brand);
+    Model.belongsTo(models.Serie);
   };
   return Model;
 };
