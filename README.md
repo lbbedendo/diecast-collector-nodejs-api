@@ -9,3 +9,16 @@ Also check out the [Web App](https://github.com/lbbedendo/diecast-collector-app)
 - Express
 - Sequelize
 - PostgreSQL Database 
+
+## Running the project
+1. Create a ".env" file in the root folder with the content of the ".env.example" file
+2. Create the databases for the "dev", "test" and "prod" environments and add the connection url and dialect to the ".env" file
+2.1 Example: 
+`DEV_DATABASE_URL=postgresql://user:password@localhost:5432/my_db`
+`DATABASE_DIALECT=postgres`
+3. Run the sequelize migration to create the tables and relationships: `npm run migrate`
+4. Run the project with `npm run dev` to start it in the development environment
+
+## Running the tests
+1. You need to create a test database first and add the connection url to the ".env" file
+2. Run the tests with `npm test`. The `test` command is already configured to run the migrations and seeds before the tests execution
