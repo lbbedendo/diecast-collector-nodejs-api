@@ -9,7 +9,7 @@
     "pretest": "NODE_ENV=test npm run migrate:reset",
     "migrate:reset": "npx sequelize db:migrate:undo:all && npm run migrate && npm run seed",
     "migrate": "npx sequelize db:migrate",
-    "seed": "npx sequelize db:seed"
+    "seed": "npx sequelize db:seed:all"
   },
   "repository": {
     "type": "git",
